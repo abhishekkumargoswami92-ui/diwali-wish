@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html>
+<head>
+    <title>Happy Diwali</title>
+    <style>
+        body {
+  margin: 0;
+  overflow: hidden;
+  background: url('diwalibg.png') no-repeat center center fixed;
+  background-size: cover;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+        h1 {
+             font-family: 'Playfair Display', serif;
+          font-size: 40px;
+          color: #ffd700;
+          text-align: center;
+            margin-top: 60px;
+        }
+        .text {
+          text-shadow: 0 0 5px #ffd700, 0 0 10px #ff9900, 0 0 15px #ff6600;
+          animation: glowPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowPulse {
+          from {
+            text-shadow: 0 0 5px #ffd700, 0 0 10px #ff9900, 0 0 15px #ff6600;
+          }
+          to {
+            text-shadow: 0 0 10px #fff700, 0 0 20px #ffcc00, 0 0 30px #ff9900;
+          }
+        }
+
+       /* .buttons {
+          display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: row; 
+          margin-top: 30px;
+          gap: 5px;
+          height : 22px;
+        }*/
+        .button {
+          display: block;
+          
+          margin: 20px auto;
+          padding: 6px 14px; 
+          font-size: 18px;
+          background-color: #ffcc00;
+          color: #033554;
+          border: solid 2px #e1a40a;
+          border-radius: 10px;
+          cursor: pointer;
+        }
+        .button:hover {
+          background-color: #ff9900;
+        }
+        .warningtext {
+          font-size: 12px;
+          text-align: center;
+          color: #d9ce06c3;
+          margin-top: 10px;
+        }
+        .text1 {
+          font-size: 18px;
+          text-align: center;
+          color: #dac334;
+          margin-top: 30px;
+        }
+
+           .diya-wrapper {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: column; 
+              margin-top: 40px;
+            }
+
+            .diya {
+              text-align: center;
+              width: 165px;
+              height: auto;
+            }
+        
+         .firework-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+          }
+
+.firework {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: radial-gradient(circle, #ff0, #f00, #79d3e3);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  opacity: 0; 
+}
+
+
+@keyframes explode {
+  0% {
+    transform: scale(1) translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(5) translate(100px, -100px);
+    opacity: 0;
+  }
+}
+
+    </style>
+</head>
+<body>
+
+  <canvas id="fireworksCanvas"></canvas>
+    <div class="firework-container">
+    <div class="firework"></div>
+    <div class="firework"></div>
+    <div class="firework"></div>
+    </div>
+
+    <h1 class="text">Happy Diwali Mate ! </h1>
+   <div class="diya-wrapper">
+    <img src="diya.png" alt="Diya" class="diya">
+    </div>
+    <div class="buttons">
+      <button onclick="location.href='diwalitext.html'" class="button">My Diwali Pics</button>
+      <button onclick="location.href='diwalitext.html'" class="button">A diwali text for you</button>
+    </div>
+    <p class="text1">Click the buttons to see my Diwali pics and a special Diwali text for you!</p>
+    <p class="warningtext"> (Well as you know the coder is a bit lazy , so both the buttons take u to the same page , also I didn't have much stuff to make separate pages for , hehehehehe) </p>
+
+
+
+   <script>
+const canvas = document.getElementById('fireworksCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function Firework(x, y, color) {
+  this.x = x;
+  this.y = y;
+  this.particles = [];
+
+  for (let i = 0; i < 100; i++) {
+  this.particles.push({
+    x: x,
+    y: y,
+    angle: Math.random() * 2 * Math.PI,
+    speed: Math.random() * 5 + 2,
+    radius: Math.random() * 2 + 1,
+    alpha: 1,
+    color: color
+  });
+}
+}
+
+Firework.prototype.update = function () {
+  this.particles.forEach(p => {
+    p.x += Math.cos(p.angle) * p.speed;
+    p.y += Math.sin(p.angle) * p.speed;
+    p.alpha -= 0.005; 
+  });
+};
+
+Firework.prototype.draw = function () {
+  this.particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
+    ctx.fill();
+  });
+};
+
+let fireworks = [];
+
+function launchFirework() {
+  for (let i = 0; i < 15; i++) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2;
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    const color = `${r},${g},${b}`;
+    fireworks.push(new Firework(x, y, color));
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  fireworks.forEach(fw => {
+    fw.update();
+    fw.draw();
+  });
+  fireworks = fireworks.filter(fw => fw.particles[0].alpha > 0);
+  if (fireworks.length > 0) requestAnimationFrame(animate);
+}
+window.onload = () => {
+  launchFirework();
+  animate();
+};
+</script>
+
+</body>
+</html>
